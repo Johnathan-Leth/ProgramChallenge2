@@ -9,12 +9,35 @@
 
 void *connection_handler(void *socket_desc) {
     int sock = *(int*)socket_desc;
-    char *hello = "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 12\n\nHello, world!";
-    write(sock, hello, strlen(hello));
-    printf("Response sent\n");
+    char buffer[1024] = {0};
+    
+    //proccess http request
+    int bytes_read = read(sock, buffer, sizeof(buffer));
+    if (bytes_read < 0) {
+        perror("Failed read");
+        close(sock);
+        free(socket_desc);
+        return NULL;
+    }
+    
+    //Gets HTTP method
+    char method[16], url[1024], protocol[16];
+    sscanf(buffer, %s %s %s, method, url, protocol);
+
+    //builds formated response according to pdf
+    char response[1024];
+    sprintf(response, "HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 102\nMethod: %s\nURL: %s\nProtocol: %s\n\nHello, world!\n\n", method, url, protocol);
+
+    //sends above response to client
+    write(sock, response, strlen(response));
+    printf("Sent response\n");
+
+    //close the socket
     close(sock);
     free(socket_desc);
+
     return NULL;
+
 }
 
 int main() {
