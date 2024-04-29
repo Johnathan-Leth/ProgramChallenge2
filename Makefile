@@ -1,0 +1,24 @@
+CC = gcc
+CFLAGS = -Wall -pthread
+
+CLIENT_SRC = HTTP_Client.c
+CLIENT_OBJ = $(CLIENT_SRC:.c=.o)
+CLIENT_TARGET = HTTP_Client
+
+SERVER_SRC = HTTP_Server.c
+SERVER_OBJ = $(SERVER_SRC:.c=.o)
+SERVER_TARGET = HTTP_Server
+
+all: $(CLIENT_TARGET) $(SERVER_TARGET)
+
+$(CLIENT_TARGET): $(CLIENT_OBJ)
+	$(CC) $(CFLAGS) $(CLIENT_OBJ) -o $(CLIENT_TARGET)
+
+$(SERVER_TARGET): $(SERVER_OBJ)
+	$(CC) $(CFLAGS) $(SERVER_OBJ) -o $(SERVER_TARGET)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(CLIENT_OBJ) $(CLIENT_TARGET) $(SERVER_OBJ) $(SERVER_TARGET)
